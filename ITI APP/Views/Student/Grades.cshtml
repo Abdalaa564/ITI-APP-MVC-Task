@@ -1,0 +1,166 @@
+﻿@model StudentGradesViewModel
+
+@{
+    Layout = "_MyLayout";
+    ViewData["Title"] = "Student Grades";
+}
+
+<h1>Grades for @Model.studentName</h1>
+
+@if (Model.CourseGrades != null && Model.CourseGrades.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Course Name</th>
+                <th>Degree</th>
+                <th>Grade</th>
+                <th>Status</th>
+                @if (User.IsInRole("Admin") || User.IsInRole("Instructor"))
+                {
+                    <th>Action</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var result in Model.CourseGrades)
+            {
+                string gradeColor = result.Grade switch
+                {
+                    "A" => "green",
+                    "B" => "lightblue",
+                    "C" => "blue",
+                    "D" => "orange",
+                    "F" => "red",
+                    _ => "black"
+                };
+                <tr>
+                    <td>@result.CourseName</td>
+                    <td>@result.Degree</td>
+                    <td style="color:@gradeColor; font-weight:bold">@result.Grade</td>
+                    <td>@result.Status</td>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Instructor"))
+                    {
+                        <td>
+                            <button class="btn btn-sm btn-warning"
+                                    onclick="openEditModal('@result.CrsId', '@result.CourseName', '@result.Degree')">
+                                Edit
+                            </button>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h3>Overall GPA: <strong>@Model.AverageGrade.ToString("0.00")</strong></h3>
+    <h3 style="color:@Model.StatusColor; font-weight:bold">Overall Status: @Model.Status</h3>
+}
+else
+{
+    <p>No registered courses found for this student.</p>
+}
+
+<a class="btn btn-secondary mt-3" href="/Student/Index">Back to List</a>
+
+
+
+
+<!-- 🔹 نافذة منبثقة لتعديل الدرجة -->
+<div class="modal fade" id="editGradeModal" tabindex="-1" aria-labelledby="editGradeLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="editGradeForm">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editGradeLabel">Edit Grade</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="courseId" name="CrsId" />
+                    <input type="hidden" id="studentName" name="studentName" value="@Model.studentName" />
+
+                    <div class="mb-3">
+                        <label class="form-label">Course</label>
+                        <input type="text" id="courseName" class="form-control" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Old Degree</label>
+                        <input type="number" id="oldDegree" class="form-control" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">New Degree</label>
+                        <input type="number" id="newDegree" class="form-control" min="0" max="100" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        let editModal;
+
+        function openEditModal(crsId, courseName, oldDegree) {
+            document.getElementById("courseId").value = crsId;
+            document.getElementById("courseName").value = courseName;
+            document.getElementById("oldDegree").value = oldDegree;
+            document.getElementById("newDegree").value = oldDegree;
+
+            editModal = new bootstrap.Modal(document.getElementById('editGradeModal'));
+            editModal.show();
+        }
+
+        document.getElementById("editGradeForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const studentName = document.getElementById("studentName").value;
+            const crsId = parseInt(document.getElementById("courseId").value);
+            const newDegree = parseFloat(document.getElementById("newDegree").value);
+
+            const data = {
+                studentName: studentName,
+                crsId: crsId,
+                newDegree: newDegree
+            };
+
+            try {
+                const response = await fetch('/Student/UpdateGradeSingle', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    editModal.hide();
+
+                    alert('✅ ' + result.message);
+
+                    setTimeout(() => {
+                        location.reload();
+                    }, 500);
+                } else {
+                    alert('❌ ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Network error occurred');
+            }
+        });
+
+        document.querySelector('button[data-bs-dismiss="modal"]').addEventListener('click', function() {
+            editModal.hide();
+        });
+    </script>
+}

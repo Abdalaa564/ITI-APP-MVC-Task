@@ -1,0 +1,54 @@
+﻿@model CourseFormViewModel
+
+
+@{
+    Layout = "_MyLayout";
+    ViewData["Title"] = Model.Id == 0 ? "Add New Course" : "Edit Course";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-action="Save" asp-controller="Course" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" required />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="topic"></label>
+        <input asp-for="topic" class="form-control"/>
+        <span asp-validation-for="topic" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="degree"></label>
+        <input asp-for="degree" type="number" class="form-control" />
+        <span asp-validation-for="degree" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="minDegree"></label>
+        <input asp-for="minDegree" type="number" class="form-control" />
+        <span asp-validation-for="minDegree" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Department</label>
+        <select asp-for="SelectedDepartments" asp-items="Model.DepartmentsSelectList" class="form-control" multiple>
+            <option value="">Select Department</option>
+        </select>
+        <small class="form-text text-muted">Hold Ctrl (or Cmd) to select multiple departments.</small>
+        <span asp-validation-for="SelectedDepartments" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success"><i class="fas fa-save"></i>Save</button>
+    <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to List</a>
+</form>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

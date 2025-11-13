@@ -1,0 +1,40 @@
+﻿@model Student
+@{
+    Layout = "_MyLayout";
+    ViewData["Title"] = "Trainee Details";
+}
+
+<h1>Trainee Details</h1>
+
+<p><strong>Name:</strong> @Model.Name</p>
+<p><strong>Address:</strong> @Model.Address</p>
+<p><strong>Age:</strong> @Model.age</p>
+<p><strong>Department:</strong> @Model.Department?.Name</p>
+<p><strong>Grade:</strong> @Model.GPA</p>
+<p class="mt-4"><strong>Registered Courses</strong></p>
+
+@if (Model.CrsResults != null && Model.CrsResults.Any())
+{
+    <table class="table table-bordered mt-2">
+        <thead>
+            <tr>
+                <th>Course Name</th>
+                @* <th>Degree</th> *@
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cr in Model.CrsResults)
+            {
+                <tr>
+                    <td>@cr.Course?.Name</td>
+                    @* <td>@cr.Degree</td> *@
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No courses registered.</p>
+}
+<a href="/Student/Index" class="btn btn-secondary">Back to List</a>

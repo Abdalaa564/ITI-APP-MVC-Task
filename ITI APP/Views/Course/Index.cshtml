@@ -1,0 +1,137 @@
+﻿@model IEnumerable<Course>
+@{
+    Layout = "_MyLayout";
+    ViewData["Title"] = "Courses List";
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div id="success-alert" class="alert alert-success alert-dismissible fade show custom-alert" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<h1>Courses</h1>
+@if (User.IsInRole("Admin"))
+{
+    <a asp-action="Create" class="btn btn-primary">Add New Course</a>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Topic</th>
+            <th>Degree</th>
+            <th>Min Degree</th>
+            <th>Department</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var course in Model)
+        {
+            <tr>
+                <td>@course.Name</td>
+                <td>@course.topic</td>
+                <td>@course.degree</td>
+                <td>@course.minDegree</td>
+                <td>@string.Join(", ", course.Departments.Select(d => d.Name))</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@course.Id" class="btn btn-info">Details</a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@course.Id" class="btn btn-warning">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@course.Id" class="btn btn-danger">Delete</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@* 
+<h1>Courses</h1>
+<a asp-action="Create" class="btn btn-primary mb-4">Add New Course</a>
+
+<div class="row">
+    @foreach (var course in Model)
+    {
+        <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="course-card border rounded shadow-sm p-3 h-100">
+                <!-- Course Image -->
+                <div class="course-image position-relative mb-3">
+                    <img src="/assets/img/education/activities-3.webp" alt="Course" class="img-fluid rounded">
+                    <div class="badge certificate position-absolute top-0 start-0 m-2">Certificate</div>
+                    <div class="price-badge position-absolute top-0 end-0 m-2">$@course.degree</div>
+                </div>
+
+                <!-- Course Content -->
+                <div class="course-content">
+                    <div class="course-meta mb-2">
+                        <span class="level me-3">Min Degree: @course.minDegree</span>
+                        <span class="duration">Departments: @string.Join(", ", course.Departments.Select(d => d.Name))</span>
+                    </div>
+
+                    <h5 class="mb-2"><a asp-action="Details" asp-route-id="@course.Id">@course.Name</a></h5>
+                    <p class="mb-3">@course.topic</p>
+
+                    <!-- Instructor placeholder (تقدر تعدل لو عندك بيانات) -->
+                    <div class="instructor d-flex align-items-center mb-3">
+                        <img src="/assets/img/person/person-f-12.webp" alt="Instructor" class="instructor-img rounded-circle me-2" style="width:40px; height:40px;">
+                        <div class="instructor-info">
+                            <h6 class="mb-0">Instructor Name</h6>
+                            <small>Position</small>
+                        </div>
+                    </div>
+
+                    <!-- Course Actions -->
+                    <div class="d-flex justify-content-between mb-2">
+                        <a asp-action="Edit" asp-route-id="@course.Id" class="btn btn-warning btn-sm">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@course.Id" class="btn btn-danger btn-sm">Delete</a>
+                        <a asp-action="Details" asp-route-id="@course.Id" class="btn btn-info btn-sm">Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div> *@
+
+
+
+
+
+
+@* <script>
+    setTimeout(() => {
+        const alert = document.getElementById("success-alert");
+        if (alert) {
+            alert.classList.remove("show");
+            alert.classList.add("fade");
+            setTimeout(() => alert.remove(), 500);
+        }
+    }, 1500);
+</script> *@
+
+
+
+
+<style>
+    .custom-alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 300px;
+        z-index: 1055; 
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.5s ease-in-out;
+    }
+
+        .custom-alert i {
+            font-size: 18px;
+        }
+</style>

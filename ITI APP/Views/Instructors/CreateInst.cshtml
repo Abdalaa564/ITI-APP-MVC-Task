@@ -1,0 +1,107 @@
+﻿@model ITI_APP.ViewModels.InstructorFormViewModel
+
+@{
+    Layout = "_MyLayout";
+    ViewData["Title"] = Model.Id == 0 ? "Create Instructor" : "Edit Instructor";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-controller="Instructors" asp-action="Save" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <!-- Name -->
+            <div class="form-group mb-3">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control"
+                       readonly="@(User.IsInRole("Instructor") ? "readonly" : null)" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group mb-3">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" 
+                readonly="@(User.IsInRole("Instructor") ? "readonly" : (Model.Id != 0 ? "readonly" : null))" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+                @if (Model.Id != 0)
+                {
+                    <small class="text-muted">Email cannot be changed once created.</small>
+                }
+            </div>
+
+            <!-- Image Upload -->
+            <div class="form-group mb-3">
+                <label asp-for="ImageFile" class="control-label"></label>
+                <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
+                <span asp-validation-for="ImageFile" class="text-danger"></span>
+
+                @if (!string.IsNullOrEmpty(Model.Image))
+                {
+                    <div class="mt-2">
+                        <img src="~/images/instructors/@Model.Image" alt="Instructor Image" class="img-thumbnail" style="max-width:150px;" />
+                        <small class="text-muted d-block mt-1">Leave empty to keep current image</small>
+                    </div>
+                }
+            </div>
+
+            <!-- Salary -->
+            <div class="form-group mb-3">
+                <label asp-for="Salary" class="control-label"></label>
+                <input asp-for="Salary" class="form-control"
+                       readonly="@(User.IsInRole("Instructor") ? "readonly" : null)" />
+                <span asp-validation-for="Salary" class="text-danger"></span>
+            </div>
+
+            <!-- Address -->
+            <div class="form-group mb-3">
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+
+            <!-- Degree -->
+            <div class="form-group mb-3">
+                <label asp-for="degree" class="control-label"></label>
+                <input asp-for="degree" class="form-control" />
+                <span asp-validation-for="degree" class="text-danger"></span>
+            </div>
+
+            <!-- Department -->
+            <div class="form-group mb-3">
+                <label asp-for="DeptId" class="control-label"></label>
+                <select asp-for="DeptId" class="form-select" asp-items="Model.Departments">
+                    <option value="">-- Select Department --</option>
+                </select>
+                <span asp-validation-for="DeptId" class="text-danger"></span>
+            </div>
+
+            <!-- Course -->
+            <div class="form-group mb-3">
+                <label asp-for="CrsId" class="control-label"></label>
+                <select asp-for="CrsId" class="form-select" asp-items="Model.Courses">
+                    <option value="">-- Select Course --</option>
+                </select>
+                <span asp-validation-for="CrsId" class="text-danger"></span>
+            </div>
+
+            <!-- Submit -->
+            <div class="form-group">
+                <input type="submit" value="@(Model.Id == 0 ? "Create" : "Save Changes")" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary ms-2">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

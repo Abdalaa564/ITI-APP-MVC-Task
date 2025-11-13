@@ -1,0 +1,61 @@
+﻿
+<a href="index" class="logo d-flex align-items-center me-auto">
+    <!-- Uncomment the line below if you also wish to use an image logo -->
+    <!-- <img src="/assets/img/logo.webp" alt=""> -->
+    <h1 class="sitename">Learner</h1>
+</a>
+
+<nav id="navmenu" class="navmenu d-flex justify-content-between align-items-center">
+    <ul class="navbar-nav flex-row">
+        
+        @if (User.IsInRole("Admin"))
+        {
+            <li class="nav-item"><a class="nav-link" href="/Dashboard/Dashboard">Home</a></li>
+            
+        }
+        <li class="nav-item"><a class="nav-link" href="/Dept/Index">Departments</a></li>
+        @if (User.IsInRole("Admin") || User.IsInRole("Instructor"))
+        {
+            <li class="nav-item"><a class="nav-link" href="/Instructors/Index">Instructors</a></li>
+            
+        }
+        <li class="nav-item"><a class="nav-link" href="/Course/Index">Courses</a></li>
+        <li class="nav-item"><a class="nav-link" href="/Student/Index">Trainees</a></li>
+        @if(User.IsInRole("Admin"))
+        {
+            <li class="nav-item"><a class="nav-link" href="/Roles/New">Add Role</a></li>
+            <li class="nav-item"><a class="nav-link" href="/Account/AddAdmin">Add Admin</a></li>
+        }
+
+    </ul>
+        <ul class="navbar-nav ms-auto flex-row">
+                @if (User.Identity.IsAuthenticated == false)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-light fw-semibold" asp-controller="Account" asp-action="Register">
+                            <i class="bi bi-person-plus"></i> Register
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                <a class="nav-link text-light fw-semibold" asp-controller="Account" asp-action="Login">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-light fw-semibold" asp-controller="Account" asp-action="Logout">
+                            <i class="bi bi-person-circle"></i>Hi, @User.Identity.Name
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light fw-semibold" asp-controller="Account" asp-action="Logout">
+                            <i class="bi bi-box-arrow-right"></i>Logout
+                        </a>
+                    </li>
+                }
+        </ul>
+    <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+</nav>
+

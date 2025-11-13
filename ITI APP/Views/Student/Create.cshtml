@@ -1,0 +1,86 @@
+﻿@model StudentFormViewModel
+
+@{
+    Layout = "_MyLayout";
+    ViewData["Title"] = Model.Id == 0 ? "Add New Student" : "Edit Student";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form method="post" asp-action="Save" asp-controller="Student" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">Name</label>
+        <input type="text" asp-for="Name" class="form-control" required
+               readonly="@(User.IsInRole("Student") ? "readonly" : null)" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Upload Image</label>
+        <input type="file" name="ImageFile" class="form-control" accept="image/*" />
+        @if (Model.Id > 0)
+        {
+            <small class="form-text text-muted">Leave empty to keep current image</small>
+        }
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Age" class="form-label">Age</label>
+        <input asp-for="Age" type="number" class="form-control" required />
+        <span asp-validation-for="Age" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Address" class="form-label">Address</label>
+        <input type="text" asp-for="Address" class="form-control" required />
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="GPA" class="form-label">Grade</label>
+        <input type="number" asp-for="GPA" class="form-control" step="0.1" required
+               readonly="@(User.IsInRole("Student") ? "readonly" : null)" />
+        <span asp-validation-for="GPA" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DeptId" class="form-label">Department</label>
+        <select asp-for="DeptId" asp-items="Model.Departments" class="form-control" required>
+            <option value="">Select Department</option>
+        </select>
+        <span asp-validation-for="DeptId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Courses</label><br />
+        @if (Model.Courses != null)
+        {
+            foreach (var course in Model.Courses)
+            {
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox"
+                           name="SelectedCourses"
+                           value="@course.Value"
+                           id="course_@course.Value"
+                           @(Model.SelectedCourses != null && Model.SelectedCourses.Contains(int.Parse(course.Value)) ? "checked" : "") />
+                    <label class="form-check-label" for="course_@course.Value">
+                        @course.Text
+                    </label>
+                </div>
+            }
+        }
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        @(Model.Id == 0 ? "Create Student" : "Update Student")
+    </button>
+    <a asp-controller="Student" asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

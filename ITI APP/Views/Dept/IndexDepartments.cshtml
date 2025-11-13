@@ -1,0 +1,38 @@
+﻿@model List<Department>
+
+@{
+    Layout = "_MyLayout";
+    ViewData["Title"] = "Departments";
+}
+
+<h2 class="text-center mb-4">Departments List</h2>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Manager Name</th>
+            <th>location</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var dept in Model)
+        {
+            <tr>
+                <td>@dept.Id</td>
+                <td>@dept.Name</td>
+                <td>@dept.Manager</td>
+                <td>@dept.location</td>
+                <td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a class="btn btn-info" href="/Instructors/Index/@dept.Id">View Instructors</a>
+                    }
+                    <a class="btn btn-warning" href="/Course/Index/@dept.Id">View Courses</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

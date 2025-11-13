@@ -1,0 +1,93 @@
+﻿@model List<Student>
+
+@{
+    Layout = "_MyLayout";
+    ViewData["Title"] = "All Students";
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div id="success-alert" class="alert alert-success alert-dismissible fade show custom-alert" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<h1>All Students</h1>
+@if (User.IsInRole("Admin"))
+{
+    <a href="/Student/Create" class="btn btn-success">➕ Add New Student</a>
+}
+
+<table class="table table-bordered mt-3">
+    <thead class="table-dark">
+        <tr>
+            <th>Name</th>
+            <th>Image</th>
+            <th>Address</th>
+            <th>Details of Grade</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var Student in Model)
+        {
+            <tr>
+                <td>@Student.Name</td>
+                <td>
+                    <img src="@Student.Image" width="80" height="80" class="rounded-circle" />
+                </td>
+                <td>@Student.Address</td>
+                <td class="d-flex flex-column" style="text-align: center; vertical-align: middle;">
+                    <span> @Student.GPA </span>
+                    <a class="btn btn-info btn-sm" href="/Student/Grades/@Student.Id">View Grades</a>
+                </td>
+                <td>
+                    <a asp-controller="Student" asp-action="Details" asp-route-id="@Student.Id" class="btn btn-info">Details</a>
+                    <a asp-controller="Student" asp-action="Edit" asp-route-id="@Student.Id" class="btn btn-warning">Edit</a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="Student" asp-action="Delete" asp-route-id="@Student.Id" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
+
+<script>
+    setTimeout(() => {
+        const alert = document.getElementById("success-alert");
+        if (alert) {
+            alert.classList.remove("show");
+            alert.classList.add("fade");
+            setTimeout(() => alert.remove(), 500);
+        }
+    }, 1500);
+</script>
+
+
+
+<style>
+    .custom-alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 300px;
+        z-index: 1055;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.5s ease-in-out;
+    }
+
+        .custom-alert i {
+            font-size: 18px;
+        }
+</style>
